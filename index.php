@@ -1,7 +1,6 @@
 <?php
-// Modify to your organization's name
-$org_name = "Organization Name";
-// Load data from CSV file outside of webroot directory
+$org_name = "Winnipeg Folk Festival";
+// Load data from CSV file
 $csv_file = '../../users.csv'; // adjust path as needed
 $data = array();
 if (($handle = fopen($csv_file, 'r')) !== FALSE) {
@@ -78,13 +77,13 @@ else {
             <label for="disclaimer">
                 <input type="checkbox" id="disclaimer" name="disclaimer" required>
                 I hereby give the <?php echo $org_name; ?> permission to use any photos/video in which I or 
-                my child/ward appear without incurring debt or liabilities of any <kind class=""></kind>
+                my child/ward appear without incurring debt or liabilities of any kind.
             </label>
             <br />
-            <button class="btn btn-large btn btn-block" type="submit" value="Submit">Submit</button>
+            <button class="btn btn-large btn-block" type="submit" value="Submit">Submit</button>
         </form>
 
-        <div id="thank_you" style="display:none;">
+        <div id="thank-you" style="display:none;">
             Form submitted. You should have an email record; please check your Spam folder if you cannot find it. Thank you!
         </div>
 
@@ -130,23 +129,23 @@ else {
             body: formData
         })
         .then(response => {
-            if (response.ok === false) {                    
+            if (response.ok === false) {
                 throw new Error(response.statusText);
             }
             return response.text();
         })
         .then(data => {
             document.getElementById("waiting-message").style.display = "none";
-            document.getElementById("thank_you").style.display = "block";
+            document.getElementById("thank-you").style.display = "block";
         })
         .catch((error) => {
             document.getElementById("waiting-message").style.display = "none";
             document.getElementById("error-message").style.display = "block";
             document.getElementById("error-message").innerHTML = "An error occurred while processing your form. Please try again later.";
-        });     
+        });
 
         return false;
-    }   
+    }
     </script>
 </body>
 </html>

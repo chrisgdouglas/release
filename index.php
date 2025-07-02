@@ -1,5 +1,5 @@
 <?php
-// Load data from CSV file
+// Load user->email data from CSV file outside of the webroot directory.
 $csv_file = '../../users.csv'; // adjust path as needed
 $data = array();
 if (($handle = fopen($csv_file, 'r')) !== FALSE) {
@@ -9,7 +9,7 @@ if (($handle = fopen($csv_file, 'r')) !== FALSE) {
     fclose($handle);
 }
 
-// Get URL search parameter
+// Get URL search parameter, should be the user id from the CSV, which is used to pull in the associated email address
 $search_param = isset($_GET['u']) ? $_GET['u'] : null;
 
 if (!isset($search_param) || !isset($data[$search_param])) {

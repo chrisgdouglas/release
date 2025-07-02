@@ -1,5 +1,7 @@
 <?php
-// Load user->email data from CSV file outside of the webroot directory.
+// Modify to your organization's name
+$org_name = "Organization Name";
+// Load data from CSV file outside of webroot directory
 $csv_file = '../../users.csv'; // adjust path as needed
 $data = array();
 if (($handle = fopen($csv_file, 'r')) !== FALSE) {
@@ -9,7 +11,7 @@ if (($handle = fopen($csv_file, 'r')) !== FALSE) {
     fclose($handle);
 }
 
-// Get URL search parameter, should be the user id from the CSV, which is used to pull in the associated email address
+// Get URL search parameter
 $search_param = isset($_GET['u']) ? $_GET['u'] : null;
 
 if (!isset($search_param) || !isset($data[$search_param])) {
@@ -28,7 +30,7 @@ else {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Release: Winnipeg Folk Festival</title>
+    <title>Photo Release: <?php echo $org_name; ?></title>
     <link rel="stylesheet" href="css/main.min.css">
     <style>
         .spinner-border {
@@ -52,7 +54,7 @@ else {
 </head>
 <body>
     <div class="container">
-        <h1>Winnipeg Folk Festival Photo Release Form</h1>
+        <h1><?php echo $org_name; ?> Photo Release Form</h1>
         <?php
         if ($error_flag === true) {
             echo '<h2>No data</h2></div></body></html>';
@@ -75,7 +77,7 @@ else {
 
             <label for="disclaimer">
                 <input type="checkbox" id="disclaimer" name="disclaimer" required>
-                I hereby give the Winnipeg Folk Festival permission to use any photos/video in which I or 
+                I hereby give the <?php echo $org_name; ?> permission to use any photos/video in which I or 
                 my child/ward appear without incurring debt or liabilities of any <kind class=""></kind>
             </label>
             <br />

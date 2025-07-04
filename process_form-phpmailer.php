@@ -20,6 +20,7 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/phpmailer/phpmailer/src/Exception.php';
 require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require 'vendor/phpmailer/phpmailer/src/SMTP.php';
+// Contains smto server, authentication, sender name, and subject
 require '../../creds.php';
 
 $mail = new PHPMailer;
@@ -33,15 +34,15 @@ $mail->Password = $smtp_password; // SMTP password
 $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
 $mail->Port = 587; // TCP port to connect to
 
-$mail->setFrom($smtp_username, 'FolkFest Photo');
+$mail->setFrom($smtp_username, $sender_name);
 $mail->addAddress($_REQUEST['email'], $_REQUEST['name']); // Add a recipient
 $mail->addAddress($_REQUEST['crew_email']);
 
-$mail->addReplyTo($_REQUEST['crew_email'], 'FolkFest Photo');
+$mail->addReplyTo($_REQUEST['crew_email'], $sender_name);
 
 $mail->isHTML(true); // Set email format to HTML
 
-$mail->Subject = 'Winnipeg Folk Festival Photo Release';
+$mail->Subject = $subject;
 $mail->Body = 'Name: ' . $_REQUEST['name'] . '<br>Email: ' . $_REQUEST['email'] . '<br>Date: ' . $_REQUEST['date'] . '<br>Photo Number: ' . $_REQUEST['photo_number'] . '<br>Photo Use Permission: ' . $disclaimer;
 $mail->AltBody = 'Name: ' . $_REQUEST['name'] . '<br>Email: ' . $_REQUEST['email'] . '<br>Date: ' . $_REQUEST['date'] . '<br>Photo Number: ' . $_REQUEST['photo_number'] . '<br>Photo Use Permission: ' . $disclaimer;
 

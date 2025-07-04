@@ -4,6 +4,8 @@ Make sure to configure creds.php (should live outside of your webroot directory)
 $smtp_server
 $smtp_username
 $smtp_password
+$sender_name
+$subject
 
 Also, make sure to install PHPMailer using Composer by running the following command in your terminal:
 
@@ -27,11 +29,11 @@ $mail = new PHPMailer;
 $disclaimer = $_REQUEST['disclaimer'] === "true" ? "True" : "False";
 
 $mail->isSMTP(); // Set mailer to use SMTP
-$mail->Host = $smtp_server; // Specify main and backup SMTP servers
+$mail->Host = $smtp_server; // Specify SMTP server
 $mail->SMTPAuth = true; // Enable SMTP authentication
 $mail->Username = $smtp_username; // SMTP username
 $mail->Password = $smtp_password; // SMTP password
-$mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
+$mail->SMTPSecure = 'tls'; // Enable TLS encryption.
 $mail->Port = 587; // TCP port to connect to
 
 $mail->setFrom($smtp_username, $sender_name);

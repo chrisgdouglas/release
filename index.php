@@ -1,5 +1,6 @@
 <?php
 $org_name = "Winnipeg Folk Festival";
+$active = TRUE; // Set to false to disable form
 // Load data from CSV file
 $csv_file = '../../users.csv'; // adjust path as needed
 $data = array();
@@ -57,6 +58,10 @@ else {
         <?php
         if ($error_flag === true) {
             echo '<h2>No data</h2></div></body></html>';
+            die();
+        }
+        if ($active === FALSE) {
+            echo '<h2>Submissions have closed. Thank you for supporting ' . $org_name .'.</h2></div></body></html>';
             die();
         }
         ?>

@@ -1,6 +1,6 @@
 A quick and dirty digital release form that sends the data to the client and the photographer via email.
 
-Reads in associated photographers from a CSV file stored outside of the webroot directory.
+Reads in associated photographers from a CSV file (default: users.csv) stored outside of the webroot directory.
 
 Format:
 ```

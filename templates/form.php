@@ -37,14 +37,13 @@ use App\Html;
     </label>
 
     <div id="error" class="msg error" hidden></div>
+    <div id="thanks" class="msg success" hidden>Form submitted. You should receive an email record &mdash; check your Spam folder if you can't find it. Thank you!</div>
 
     <button type="submit" id="submit-btn">
         <span class="btn-label">Submit</span>
         <span class="btn-spinner spinner" aria-hidden="true"></span>
     </button>
 </form>
-
-<div id="thanks" class="msg success" hidden>Form submitted. You should receive an email record &mdash; check your Spam folder if you can't find it. Thank you!</div>
 
 <script nonce="<?= Html::e($nonce) ?>">
 (function () {
@@ -82,7 +81,7 @@ use App\Html;
         .then(function (res) {
             if (!res.ok || !res.d.ok) { fail((res.d && res.d.error) || 'Submission failed. Please try again.'); return; }
             setLoading(false);
-            form.hidden = true;
+            button.hidden = true;
             thanks.hidden = false;
         })
         .catch(function () { fail('A network error occurred. Please try again.'); });

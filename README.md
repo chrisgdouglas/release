@@ -1,6 +1,6 @@
-A quick and dirty digital release form that sends the data to the client and the photographer via email.
+A digital photo release form that emails the signed release to the client and the photographer.
 
-Reads in associated photographers from a CSV file (default: users.csv) stored outside of the webroot directory.
+Reads associated photographers from a CSV file (default: `users.csv`) stored outside the webroot.
 
 Format:
 ```
@@ -8,19 +8,50 @@ foob,foobar@example.com
 barf,barfoo@example.com
 ```
 
-Additionally, the code will expect a "creds.php" file to exist outside of the webroot directory. This PHP file will contain the SMTP information and your customizations for use by the form.
+## Credentials
 
-Format:
+The app expects a `creds.php` file outside the webroot. It holds your SMTP settings and is **gitignored** — never commit it.
+
+A sample is provided as `creds.php.example`. **Copy it to `creds.php`** and fill in real values:
+
+```bash
+cp creds.php.example creds.php   # then edit creds.php
 ```
+
+`creds.php` returns an array:
+```php
 <?php
 
-$smtp_server = "smtp.your.server";
-$smtp_username = "your_smtp_username";
-$smtp_password = "you_smtp_password";
-$sender_name = "Name that should be on outgoing emails";
-$subject = "Your organization";
+declare(strict_types=1);
+
+return [
+    'smtp_server'   => 'smtp.your.server',
+    'smtp_username' => 'your_smtp_username',
+    'smtp_password' => 'your_smtp_password',
+    'sender_name'   => 'Name that should be on outgoing emails',
+    'subject'       => 'Your organization',
+];
 ```
 
-Basic error checking is performed, with messaging to the user.
+## Routes
 
-Your hosted server will require PHP Mailer. You will need to configure your SMTP connectivity.
+- `/?u=<username>` — release form for that photographer
+- `/?qr=<username>` — printable QR code linking to the form (works even when submissions are closed)
+- `POST /` — AJAX form submission (CSRF-protected)
+
+The recipient email is always resolved server-side from the username; it is never accepted from the client.
+
+## Deployment
+
+- Requires PHP 8.1.2+ and Composer (`composer install --no-dev` in production).
+- Point your web server docroot at `public/`. Keep `creds.php` and `users.csv` one level above it.
+- Example server config: `deploy/nginx.conf.example` (or the bundled `public/.htaccess` for Apache).
+
+## Development
+
+```bash
+composer install
+composer test    # PHPUnit
+composer stan    # PHPStan level 8
+php -S 127.0.0.1:8000 -t public
+```

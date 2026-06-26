@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    phpVersion: 80102
+    paths:
+        - src
+        - public
+    excludePaths:
+        - vendor

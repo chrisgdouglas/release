@@ -1,1 +1,11 @@
 vendor/*
+
+# Secrets and PII — never commit
+creds.php
+users.csv
+
+# Rate-limiter state
+rl/
+
+# Tooling
+.phpunit.result.cache

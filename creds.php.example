@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Sample credentials file.
+ *
+ * Rename this to "creds.php" and move it outside your webroot (one level above
+ * public/, alongside users.csv). The real creds.php is gitignored — never commit it.
+ */
+
+declare(strict_types=1);
+
+return [
+    'smtp_server'   => 'smtp.your.server',
+    'smtp_username' => 'your_smtp_username',
+    'smtp_password' => 'your_smtp_password',
+    'sender_name'   => 'Name that should be on outgoing emails',
+    'subject'       => 'Your organization',
+];

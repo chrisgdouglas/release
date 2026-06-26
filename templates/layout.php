@@ -47,7 +47,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .spinner-container{display:flex;align-items:center;gap:.75rem}
 .spinner{width:32px;height:32px;border:3px solid rgba(33,150,243,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.qr{max-width:320px;margin:2rem auto 0;padding:1.5rem;background:#fff;border:1px solid var(--line);border-radius:var(--radius);text-align:center}
+.qr{max-width:320px;margin:.5rem auto 0;padding:1.5rem;background:#fff;border:1px solid var(--line);border-radius:var(--radius);text-align:center}
 .qr svg{width:100%;height:auto;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
 .qr h2{margin-top:0}
 @media (max-width:640px){

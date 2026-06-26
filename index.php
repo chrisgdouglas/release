@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
+
 $org_name = "Winnipeg Folk Festival";
 $active = TRUE; // Set to false to disable form
 // Load data from CSV file
@@ -9,6 +11,47 @@ if (($handle = fopen($csv_file, 'r')) !== FALSE) {
         $data[$row[0]] = $row[1];
     }
     fclose($handle);
+}
+
+// QR code mode: /release?qr=<user> renders a QR code linking to /release?u=<user>
+// and hides the form. Generated before the $active check so codes can be
+// produced ahead of an event even when submissions are closed.
+$qr_param = isset($_GET['qr']) ? $_GET['qr'] : null;
+if ($qr_param !== null) {
+    $qr_valid = isset($data[$qr_param]);
+    if ($qr_valid) {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $base   = $scheme . '://' . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?');
+        $target = $base . '?u=' . urlencode($qr_param);
+        $options = new \chillerlan\QRCode\QROptions([
+            'outputBase64'    => false,
+            'svgAddXmlHeader' => false,
+        ]);
+        $qr_svg = (new \chillerlan\QRCode\QRCode($options))->render($target);
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Photo Release QR: <?php echo $org_name; ?></title>
+        <link rel="stylesheet" href="css/main.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1><?php echo $org_name; ?> Photo Release Form</h1>
+            <?php if (!$qr_valid): ?>
+                <h2>No data</h2>
+            <?php else: ?>
+                <h2><?php echo htmlspecialchars($qr_param); ?></h2>
+                <div style="max-width:300px;"><?php echo $qr_svg; ?></div>
+            <?php endif; ?>
+        </div>
+    </body>
+    </html>
+    <?php
+    die();
 }
 
 // Get URL search parameter

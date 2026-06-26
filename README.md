@@ -44,8 +44,11 @@ The recipient email is always resolved server-side from the username; it is neve
 ## Deployment
 
 - Requires PHP 8.1.2+ and Composer (`composer install --no-dev` in production).
-- Point your web server docroot at `public/`. Keep `creds.php` and `users.csv` one level above it.
-- Example server config: `deploy/nginx.conf.example` (or the bundled `public/.htaccess` for Apache).
+- Web server docroot → `public/`. Keep `creds.php` and `users.csv` one level above it (outside webroot).
+- Can be deployed at the domain root (`/`) or a subdirectory (`/release/`).
+- Example server configs:
+  - **nginx** (subdirectory): `deploy/nginx.conf.example`
+  - **Apache** (any path): adjust `RewriteBase` in `public/.htaccess` to match your deployment path (e.g., `/release/` or `/`)
 
 ## Development
 

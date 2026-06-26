@@ -1,6 +1,8 @@
 # Apache fallback (if not using nginx). Front-controller routing + headers.
+# Adjust RewriteBase to match your deployment path (e.g., /release/ for subdirectory).
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /release/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>

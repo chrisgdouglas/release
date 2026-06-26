@@ -1,26 +1,25 @@
-# Example nginx vhost for the photo release tool.
-# Docroot is public/ so src/, templates/, vendor/, creds.php and users.csv
-# are NOT web-reachable.
+# Example nginx vhost for the photo release tool at a subdirectory.
+# Serves https://www.example.com/release/
+#
+# App layout:
+#   /var/www/app/release/public/      <- docroot for /release/
+#   /var/www/app/release/src/
+#   /var/www/app/release/templates/
+#   /var/www/app/release/creds.php    <- outside webroot
+#   /var/www/app/release/users.csv    <- outside webroot
 
 server {
     listen 443 ssl http2;
-    server_name release.example.com;
+    server_name www.example.com;
 
-    ssl_certificate     /etc/letsencrypt/live/release.example.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/release.example.com/privkey.pem;
-
-    root /var/www/release/public;
-    index index.php;
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
 
     # --- Compression (saturated-network goal) ---
     gzip on;
     gzip_comp_level 6;
     gzip_min_length 256;
     gzip_types text/html text/css application/javascript application/json image/svg+xml;
-    # If ngx_brotli is built in, prefer it:
-    # brotli on;
-    # brotli_comp_level 5;
-    # brotli_types text/html text/css application/javascript application/json image/svg+xml;
 
     # --- Security headers (PHP also sets these; either layer is sufficient) ---
     add_header X-Content-Type-Options "nosniff" always;
@@ -28,23 +27,30 @@ server {
     add_header Referrer-Policy "no-referrer" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
-    # Everything routes through the front controller.
-    location / {
+    # --- /release/ subdirectory ---
+    location /release/ {
+        alias /var/www/app/release/public/;
+
+        # Route everything through the front controller.
         try_files $uri /index.php$is_args$args;
+
+        # Block dotfiles.
+        location ~ /\. { deny all; }
+
+        # PHP handler.
+        location ~ \.php$ {
+            fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME /var/www/app/release/public$fastcgi_script_name;
+            include fastcgi_params;
+        }
     }
 
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-
-    # Block dotfiles.
-    location ~ /\. { deny all; }
+    # Block access to non-public parts (defense in depth).
+    location ~ ^/release/(src|templates|vendor|creds|users|rl)/ { deny all; }
 }
 
 server {
     listen 80;
-    server_name release.example.com;
+    server_name www.example.com;
     return 301 https://$host$request_uri;
 }

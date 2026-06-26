@@ -14,16 +14,21 @@ use App\Html;
     <input type="hidden" name="u" value="<?= Html::e($username) ?>">
 
     <label for="name">Name</label>
-    <input type="text" id="name" name="name" maxlength="200" required>
+    <input type="text" id="name" name="name" maxlength="200" required
+           autocomplete="name" autocapitalize="words" pattern=".*\S.*"
+           title="Please enter your name.">
 
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" maxlength="200" required>
+    <input type="email" id="email" name="email" maxlength="200" required
+           autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false"
+           title="Please enter a valid email address.">
 
     <label for="date">Date</label>
     <input type="date" id="date" name="date" value="<?= Html::e($today) ?>" required>
 
     <label for="photo_number">Photo Number</label>
-    <input type="text" id="photo_number" name="photo_number" maxlength="200" required>
+    <input type="text" id="photo_number" name="photo_number" maxlength="200" required
+           inputmode="text" pattern=".*\S.*" title="Please enter the photo number.">
 
     <label class="check" for="disclaimer">
         <input type="checkbox" id="disclaimer" name="disclaimer" required>
@@ -31,25 +36,32 @@ use App\Html;
         which I or my child/ward appear without incurring debt or liabilities of any kind.</span>
     </label>
 
-    <button type="submit">Submit</button>
+    <div id="error" class="msg error" hidden></div>
+
+    <button type="submit" id="submit-btn">
+        <span class="btn-label">Submit</span>
+        <span class="btn-spinner spinner" aria-hidden="true"></span>
+    </button>
 </form>
 
-<div id="waiting" class="msg" hidden>Submitting, please wait&hellip;<div class="spinner" role="status"></div></div>
-<div id="thanks" class="msg" hidden>Form submitted. You should receive an email record &mdash; check your Spam folder if you can't find it. Thank you!</div>
-<div id="error" class="msg error" hidden></div>
+<div id="thanks" class="msg success" hidden>Form submitted. You should receive an email record &mdash; check your Spam folder if you can't find it. Thank you!</div>
 
 <script nonce="<?= Html::e($nonce) ?>">
 (function () {
     var form = document.getElementById('release-form');
-    var waiting = document.getElementById('waiting');
+    var button = document.getElementById('submit-btn');
     var thanks = document.getElementById('thanks');
     var error = document.getElementById('error');
     var tokenEl = document.querySelector('meta[name="csrf-token"]');
     var token = tokenEl ? tokenEl.getAttribute('content') : '';
 
+    function setLoading(on) {
+        button.disabled = on;
+        button.classList.toggle('is-loading', on);
+    }
+
     function fail(msg) {
-        waiting.hidden = true;
-        form.hidden = false;
+        setLoading(false);
         error.textContent = msg;
         error.hidden = false;
     }
@@ -59,8 +71,7 @@ use App\Html;
         error.hidden = true;
         if (!form.checkValidity()) { form.reportValidity(); return; }
 
-        form.hidden = true;
-        waiting.hidden = false;
+        setLoading(true);
 
         fetch(window.location.pathname + window.location.search, {
             method: 'POST',
@@ -70,7 +81,8 @@ use App\Html;
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (res) {
             if (!res.ok || !res.d.ok) { fail((res.d && res.d.error) || 'Submission failed. Please try again.'); return; }
-            waiting.hidden = true;
+            setLoading(false);
+            form.hidden = true;
             thanks.hidden = false;
         })
         .catch(function () { fail('A network error occurred. Please try again.'); });
